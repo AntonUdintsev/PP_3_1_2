@@ -6,10 +6,8 @@ import com.example.pp_3_1_2.model.Role;
 import com.example.pp_3_1_2.model.User;
 
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -23,11 +21,11 @@ public class UserDaoImpl implements UserDao {
 
     @PersistenceContext
     private EntityManager entityManager;
+    private PasswordEncoder bCryptPasswordEncoder;
 
-
-    private PasswordEncoder bCryptPasswordEncoder() { return new BCryptPasswordEncoder();
+    public UserDaoImpl(@Lazy PasswordEncoder bCryptPasswordEncoder) {
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
-
 
     @Override
     public List<User> getUsers() {
@@ -38,7 +36,7 @@ public class UserDaoImpl implements UserDao {
     @Override
     public void addUser(User user) {
             user.setRoles(Collections.singleton(new Role(2L, "ROLE_USER")));
-            user.setUserPassword(bCryptPasswordEncoder().encode(user.getPassword()));
+            user.setUserPassword(bCryptPasswordEncoder.encode(user.getPassword()));
             entityManager.persist(user);
     }
 

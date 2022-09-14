@@ -3,6 +3,7 @@ package com.example.pp_3_1_2.service;
 
 import com.example.pp_3_1_2.dao.UserDao;
 import com.example.pp_3_1_2.model.User;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;

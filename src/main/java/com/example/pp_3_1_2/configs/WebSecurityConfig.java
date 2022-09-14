@@ -4,6 +4,7 @@ import com.example.pp_3_1_2.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -15,12 +16,16 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
-    private final SuccessUserHandler successUserHandler;
-    private final UserService userService;
 
-    public WebSecurityConfig(SuccessUserHandler successUserHandler, UserService userService) {
+    private final SuccessUserHandler successUserHandler;
+    private UserService userService;
+
+    private PasswordEncoder bCryptPasswordEncoder;
+
+    public WebSecurityConfig(SuccessUserHandler successUserHandler, UserService userService, @Lazy PasswordEncoder bCryptPasswordEncoder) {
         this.successUserHandler = successUserHandler;
         this.userService = userService;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
     @Override
@@ -39,11 +44,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .permitAll();
     }
 
+    @Override
     @Autowired
-    protected void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userService).passwordEncoder(bCryptPasswordEncoder());
+    public void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(userService).passwordEncoder(bCryptPasswordEncoder);
+    }
+    @Bean
+    public PasswordEncoder bCryptPasswordEncoder() { return new BCryptPasswordEncoder();
     }
 
-    private PasswordEncoder bCryptPasswordEncoder() { return new BCryptPasswordEncoder();
-    }
 }

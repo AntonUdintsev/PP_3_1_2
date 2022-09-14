@@ -3,6 +3,7 @@ package com.example.pp_3_1_2.controller;
 
 import com.example.pp_3_1_2.model.User;
 import com.example.pp_3_1_2.service.UserService;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
@@ -20,8 +21,8 @@ public class UserController {
 	}
 
 	@GetMapping("/user")
-	public String printUser(ModelMap model, Principal principal) {
-		model.addAttribute("user", userService.findByName(principal.getName()));
+	public String printUser(ModelMap model, @AuthenticationPrincipal User user) {
+		model.addAttribute("user", user);
 		return "/user";
 	}
 }
